@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Horizon UPDATES — Rust Edition Fan Page</title>
+  <meta name="description" content="Fan page for Horizon, the Rust Edition Minecraft launcher for Android and PC. Downloads, release versions, video and more.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="#top"><span class="logo-block"></span> HORIZON <small>UPDATES</small></a>
+  <button class="burger" id="burger" aria-label="Menu" aria-expanded="false">&#9776;</button>
+  <nav id="nav">
+    <a href="#downloads">Downloads</a>
+    <a href="#releases">Releases</a>
+    <a href="#video">Video</a>
+    <a href="#features">Features</a>
+    <a href="#ui">Window &amp; Mobile</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="sky">
+      <span class="cloud c1"></span><span class="cloud c2"></span><span class="cloud c3"></span>
+      <div class="sun"></div>
+    </div>
+    <div class="hero-inner">
+      <span class="badge rust">&#9881; RUST EDITION</span>
+      <h1 class="title">HORIZON<br><span>UPDATES</span></h1>
+      <p class="tagline">The fan page for the fast Minecraft launcher for <b>Android</b> and <b>PC</b>.</p>
+      <div class="cta">
+        <a class="mc-btn green" href="https://github.com/starling-client/starling/releases" target="_blank" rel="noopener">&#128241; Download APK</a>
+        <a class="mc-btn" href="https://playhorizon.dev" target="_blank" rel="noopener">&#128187; Download for PC / Mac</a>
+      </div>
+      <p class="latest-line" id="latestLine">Checking latest version&hellip;</p>
+    </div>
+    <div class="grass"></div>
+  </section>
+
+  <!-- DOWNLOADS -->
+  <section id="downloads" class="block dirt">
+    <h2 class="heading">Downloads</h2>
+    <div class="grid two">
+      <article class="card reveal">
+        <div class="card-icon android"></div>
+        <h3>Android</h3>
+        <p>Grab the latest APK straight from GitHub Releases. Enable &ldquo;Install unknown apps&rdquo; for your browser or file manager, then install.</p>
+        <a class="mc-btn green wide" href="https://github.com/starling-client/starling/releases" target="_blank" rel="noopener">Download APK</a>
+        <a class="mc-btn dark wide" id="latestApk" href="https://github.com/starling-client/starling/releases/latest" target="_blank" rel="noopener">Latest release</a>
+      </article>
+      <article class="card reveal">
+        <div class="card-icon pc"></div>
+        <h3>Windows &bull; macOS &bull; Linux</h3>
+        <p>Desktop builds are on the official site. Pick your platform and you are ready to play.</p>
+        <a class="mc-btn wide" href="https://playhorizon.dev" target="_blank" rel="noopener">playhorizon.dev</a>
+        <div class="chips"><span>Windows</span><span>macOS</span><span>Linux</span></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- RELEASES -->
+  <section id="releases" class="block stone">
+    <h2 class="heading">Release Versions</h2>
+    <p class="sub">Live from GitHub &mdash; newest first.</p>
+    <div class="releases" id="releaseList">
+      <div class="loading">Loading releases&hellip;</div>
+    </div>
+    <p class="center"><a class="mc-btn dark" href="https://github.com/starling-client/starling/releases" target="_blank" rel="noopener">All releases on GitHub</a></p>
+  </section>
+
+  <!-- VIDEO -->
+  <section id="video" class="block dirt">
+    <h2 class="heading">Watch</h2>
+    <div class="video-frame reveal" id="videoFrame">
+      <div class="video-placeholder" id="videoPlaceholder">
+        <button class="play" id="playBtn" aria-label="Play video">&#9654;</button>
+        <p>Horizon showcase video</p>
+      </div>
+    </div>
+    <p class="sub center">Tip: set your video link in <code>script.js</code> (<code>VIDEO_URL</code>).</p>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" class="block grass-bg">
+    <h2 class="heading">Features</h2>
+    <div class="grid four">
+      <div class="feature reveal"><i>&#9881;</i><h3>Rust Powered</h3><p>Built in Rust for a tiny footprint and quick startup.</p></div>
+      <div class="feature reveal"><i>&#9889;</i><h3>Fast Launch</h3><p>Jump into your world in seconds on PC or phone.</p></div>
+      <div class="feature reveal"><i>&#128230;</i><h3>Version Manager</h3><p>Keep many Minecraft versions and profiles side by side.</p></div>
+      <div class="feature reveal"><i>&#129521;</i><h3>Mods &amp; Packs</h3><p>Organise mods, resource packs and shaders.</p></div>
+      <div class="feature reveal"><i>&#128241;</i><h3>Android + PC</h3><p>One launcher family across your devices.</p></div>
+      <div class="feature reveal"><i>&#127912;</i><h3>Minecraft Style</h3><p>Blocky UI that feels right at home.</p></div>
+      <div class="feature reveal"><i>&#128260;</i><h3>Frequent Updates</h3><p>Fresh builds posted on GitHub Releases.</p></div>
+      <div class="feature reveal"><i>&#127381;</i><h3>Free Download</h3><p>Grab it from the links above, no fuss.</p></div>
+    </div>
+  </section>
+
+  <!-- UI SHOWCASE -->
+  <section id="ui" class="block stone">
+    <h2 class="heading">Window &amp; Mobile UI</h2>
+    <p class="sub">A look at the launcher layouts (illustrative mockups).</p>
+    <div class="ui-row">
+
+      <!-- Window UI -->
+      <div class="window reveal">
+        <div class="win-bar"><span class="dots"><i></i><i></i><i></i></span><b>Horizon</b><span class="win-ctl">_ &#9633; &times;</span></div>
+        <div class="win-body">
+          <aside class="win-side">
+            <div class="side-item active">&#9654; Play</div>
+            <div class="side-item">&#128230; Versions</div>
+            <div class="side-item">&#129521; Mods</div>
+            <div class="side-item">&#127912; Skins</div>
+            <div class="side-item">&#9881; Settings</div>
+          </aside>
+          <div class="win-main">
+            <div class="news"><b>What's new</b><span>Rust Edition update is out!</span></div>
+            <div class="profile">
+              <label>Profile</label>
+              <div class="select">Latest release &#9662;</div>
+            </div>
+            <div class="mc-btn green wide play-fake">PLAY</div>
+            <div class="bar"><span></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile UI -->
+      <div class="phone reveal">
+        <div class="notch"></div>
+        <div class="phone-screen">
+          <div class="p-head">HORIZON</div>
+          <div class="p-card"><small>Selected</small><b>Latest release</b></div>
+          <div class="p-card"><small>Account</small><b>Steve</b></div>
+          <div class="mc-btn green wide play-fake">PLAY</div>
+          <div class="p-tabs"><span class="on">&#9654;</span><span>&#128230;</span><span>&#129521;</span><span>&#9881;</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="block dirt">
+    <h2 class="heading">FAQ</h2>
+    <div class="faq">
+      <details class="reveal"><summary>Where do I get the Android version?</summary><p>From the GitHub releases page. Download the latest <code>.apk</code> and install it.</p></details>
+      <details class="reveal"><summary>Where do I get Windows / Mac / Linux?</summary><p>Visit <a href="https://playhorizon.dev" target="_blank" rel="noopener">playhorizon.dev</a>.</p></details>
+      <details class="reveal"><summary>What does &ldquo;Rust Edition&rdquo; mean?</summary><p>It is the edition of the launcher written in Rust, aimed at speed and low resource use.</p></details>
+      <details class="reveal"><summary>Is this the official site?</summary><p>No. This is an unofficial fan page. Use the links above for official downloads.</p></details>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>HORIZON UPDATES &mdash; Rust Edition Fan Page</p>
+  <p class="small">Unofficial fan site. Not affiliated with Mojang Studios, Microsoft or the Horizon developers. Minecraft is a trademark of Mojang Studios.</p>
+  <p class="small">
+    <a href="https://github.com/starling-client/starling/releases" target="_blank" rel="noopener">GitHub Releases</a> &bull;
+    <a href="https://playhorizon.dev" target="_blank" rel="noopener">playhorizon.dev</a> &bull;
+    &copy; <span id="year"></span>
+  </p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
