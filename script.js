@@ -1,7 +1,7 @@
 /* ============ Horizon UPDATES — config ============ */
 const REPO = "starling-client/starling";
 // Paste a YouTube link (watch / youtu.be / shorts / embed) or a direct .mp4 URL:
-const VIDEO_URL = "https://youtu.be/aTA11AwHW9M?si=yKgRa6JPwPISIIqx";
+const VIDEO_URL = "https://youtu.be/O_C-f9in9sM?si=sgde93Z4497vSr-1";
 /* ================================================== */
 
 (function () {
