@@ -1,249 +1,370 @@
-/* ============ Horizon UPDATES — config ============ */
-const REPO = "starling-client/starling";
-// Paste a YouTube link (watch / youtu.be / shorts / embed) or a direct .mp4 URL:
-const VIDEO_URL = "https://youtu.be/O_C-f9in9sM?si=sgde93Z4497vSr-1";
-/* ================================================== */
-
-(function () {
+/* Horizon Updates — community fan hub
+   Live data sources: Starling releases, archived Horizon Android releases and GitHub contributors.
+   This site is independent and is not an official Horizon, Starling or Minecraft property.
+*/
+(() => {
   "use strict";
 
-  const API = "https://api.github.com/repos/" + REPO;
-  const $ = (s, r) => (r || document).querySelector(s);
-  const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
-  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const ic = (n, c) => '<svg class="ic' + (c ? " " + c : "") + '"><use href="#i-' + n + '"/></svg>';
-  const fmtDate = (d) => new Date(d).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
-  const fmtSize = (b) => (b / 1048576).toFixed(1) + " MB";
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+  const API = "https://api.github.com/repos/";
+  const STARLING_REPO = "JuanLuci/starling";
+  const LEGACY_REPO = "starling-client/starling";
+  const CONTRIBUTORS_REPO = "starling-client/starling";
+  const STARLING_RELEASES = "https://github.com/JuanLuci/starling/releases";
+  const LEGACY_RELEASES = "https://github.com/starling-client/starling/releases";
+  const DESKTOP_RELEASES = "https://playhorizon.dev/releases";
+  const CACHE_TTL = 5 * 60 * 1000;
 
-  /* ---------- static fallback data (used if the GitHub API is unreachable) ---------- */
-  const ABIS = [
-    { key: "arm64-v8a", note: "Most phones" },
-    { key: "armeabi-v7a", note: "Older 32-bit phones" },
-    { key: "x86_64", note: "Emulators & Chromebooks" },
-    { key: "x86", note: "Emulators (32-bit)" }
-  ];
-  // sizes order: arm64-v8a, armeabi-v7a, x86, x86_64
-  const FB_REL = [
-    { tag: "v0.7.8", name: "Horizon Android 0.7.8", date: "2026-11-07T00:24:34Z", pre: false, ver: "0.7.8", s: [37484904, 32390190, 38224830, 40636249] },
-    { tag: "v0.7.7", name: "Horizon Android 0.7.7", date: "2026-11-02T22:54:34Z", pre: false, ver: "0.7.7", s: [36557160, 31541806, 37168934, 39629805] },
-    { tag: "v0.7.6", name: "Horizon Android 0.7.6", date: "2026-10-31T23:30:12Z", pre: false, ver: "0.7.6", s: [35233024, 30309690, 35645566, 38180413] },
-    { tag: "v0.7.6-rc1", name: "Horizon Android 0.7.6 RC1", date: "2026-10-31T13:02:00Z", pre: true, ver: "0.7.6", s: [34672064, 0, 0, 0] },
-    { tag: "v0.7.5", name: "Horizon Android 0.7.5", date: "2026-10-31T00:04:24Z", pre: false, ver: "0.7.5", s: [33439928, 28630910, 33593174, 36247025] }
-  ];
-  function fbRelease(f) {
-    const base = "https://github.com/" + REPO + "/releases/download/" + f.tag + "/";
-    const order = ["arm64-v8a", "armeabi-v7a", "x86", "x86_64"];
-    const apks = {};
-    order.forEach((k, i) => { if (f.s[i]) apks[k] = { url: base + "Horizon-Android-" + f.ver + "-" + k + ".apk", size: f.s[i] }; });
-    return { tag: f.tag, name: f.name, date: f.date, pre: f.pre, url: "https://github.com/" + REPO + "/releases/tag/" + f.tag, apks: apks, sums: base + "SHA256SUMS.txt" };
+  const FALLBACK_STARLING = [{
+    tag_name: "v0.2.3",
+    name: "Starling v0.2.3",
+    html_url: STARLING_RELEASES + "/tag/v0.2.3",
+    published_at: "",
+    prerelease: false,
+    body: "Starling 0.2.3 brings your worlds and resource packs over from Horizon Android, improves import feedback and fixes first-start behavior.",
+    assets: [{
+      name: "starling-0.2.3-arm64-v8a.apk",
+      browser_download_url: "https://github.com/JuanLuci/starling/releases/download/v0.2.3/starling-0.2.3-arm64-v8a.apk",
+      size: 0
+    }]
+  }];
+  const FALLBACK_LEGACY = [{
+    tag_name: "v0.7.8",
+    name: "Horizon Android 0.7.8",
+    html_url: LEGACY_RELEASES + "/tag/v0.7.8",
+    published_at: "2026-11-07T00:24:34Z",
+    prerelease: false,
+    body: "Final stable release of Horizon Android as a separate project. Android development is moving forward under the Starling name.",
+    assets: [
+      { name: "Horizon-Android-0.7.8-arm64-v8a.apk", browser_download_url: "https://github.com/starling-client/starling/releases/download/v0.7.8/Horizon-Android-0.7.8-arm64-v8a.apk", size: 37484904 },
+      { name: "Horizon-Android-0.7.8-armeabi-v7a.apk", browser_download_url: "https://github.com/starling-client/starling/releases/download/v0.7.8/Horizon-Android-0.7.8-armeabi-v7a.apk", size: 32390190 },
+      { name: "Horizon-Android-0.7.8-x86.apk", browser_download_url: "https://github.com/starling-client/starling/releases/download/v0.7.8/Horizon-Android-0.7.8-x86.apk", size: 38224830 },
+      { name: "Horizon-Android-0.7.8-x86_64.apk", browser_download_url: "https://github.com/starling-client/starling/releases/download/v0.7.8/Horizon-Android-0.7.8-x86_64.apk", size: 40636249 }
+    ]
+  }];
+
+  const escapeHTML = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[char]);
+
+  function formatDate(value) {
+    if (!value) return "Date not provided";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "Date not provided";
+    return new Intl.DateTimeFormat(undefined, { year: "numeric", month: "short", day: "numeric" }).format(date);
   }
 
-  const FB_CONTRIB_RAW = "ludovic111:7256,levzzz5154:1062,kacpherek:1054,rdbtCVS:778,Vasysik:205,xFedeT:139,d3grando:138,Online5277:123,martipops:80,Domanffe:78,DUzzL:75,GoyDevv:74,Teiwazik:72,Sylviromi:70,sirrayi:67,MSedgeMC:63,elythepreciouscat:62,PzmuV1517:59,arismoko:56,claude:55,senjinthedragon:54,ThatCakeIsAPie:53,socksprox:52,masa-masa-0314:48,GIGABAIT93:44,some-du6e:42,reservedbytes:41,codex:37,leifiyoo:37,iLostName:36,WooCaash:33,Qwerner88880:29,FusselTV:25,degepie:24,hectoreccles:21,Joansitoh:21,DenisHumen:20,stievenw:20,AurelienBelloir:19,ErikKalikas:19,spidercraft:18,LookImEcho-Rick:17,josegil1909:16,navinor:16,k3yh:15,vlesmentie:14,mariuslozo-boop:13,doodlyyousuf:13,Ashura006:11,TobiasLogic:11,UMCEKO:11,ludovicthenot:11,Vaspyyy:11,Xmilon:10,mulareal:10,v3nn7:10,ItsPotatoTime:9,Bloodulon:9,apeirs:9,deezhizyu:8,JulesB40:8,JustKarkat:8,Teiwazikk:8,feeldev12:8,kerimgrande:8,posok124521:8,RVZO6:7,damnurmum:7,Stink-O:7,Akirabane:7,carlosnunez09:7,Mik00000:7,kaito65452:6,TraiNguyenVan:6,repositorykreml1n:6,ult1mq:6,quintyo:6,oskal675-design:6,lazy-importer:6,Expected333:6,echo-ilovech3ss:6,NetuosoDEV:6,Detimes:6,CocofireHD:6,Aridj4861:6,Username59138:5";
-  const FB_CONTRIB = FB_CONTRIB_RAW.split(",").map((x) => { const p = x.split(":"); return { login: p[0], c: +p[1] }; });
+  function formatSize(bytes) {
+    const number = Number(bytes);
+    if (!number) return "APK";
+    return `${(number / 1048576).toFixed(1)} MB`;
+  }
 
-  /* ---------- tiny cached fetch ---------- */
-  function getJSON(url, ttl) {
-    const key = "hz:" + url;
+  async function getJSON(url) {
+    const key = `horizon-updates:${url}`;
     try {
-      const raw = sessionStorage.getItem(key);
-      if (raw) { const o = JSON.parse(raw); if (Date.now() - o.t < ttl) return Promise.resolve(o.d); }
-    } catch (e) {}
-    return fetch(url, { headers: { Accept: "application/vnd.github+json" } })
-      .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then((d) => { try { sessionStorage.setItem(key, JSON.stringify({ t: Date.now(), d: d })); } catch (e) {} return d; });
+      const cached = sessionStorage.getItem(key);
+      if (cached) {
+        const record = JSON.parse(cached);
+        if (Date.now() - record.savedAt < CACHE_TTL) return record.data;
+      }
+    } catch (_) { /* session storage can be disabled */ }
+
+    const controller = "AbortController" in window ? new AbortController() : null;
+    const timeout = controller ? window.setTimeout(() => controller.abort(), 9000) : null;
+    try {
+      const response = await fetch(url, {
+        headers: { Accept: "application/vnd.github+json" },
+        signal: controller ? controller.signal : undefined
+      });
+      if (!response.ok) throw new Error(`GitHub API returned ${response.status}`);
+      const data = await response.json();
+      try { sessionStorage.setItem(key, JSON.stringify({ savedAt: Date.now(), data })); } catch (_) { /* ignore */ }
+      return data;
+    } finally {
+      if (timeout) window.clearTimeout(timeout);
+    }
   }
 
-  /* ---------- nav / reveal / misc ---------- */
-  const nav = $("#nav"), links = $("#links"), burger = $("#burger");
-  const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 10);
-  onScroll(); window.addEventListener("scroll", onScroll, { passive: true });
-  burger.addEventListener("click", () => {
-    const open = links.classList.toggle("open");
-    burger.setAttribute("aria-expanded", open);
-    burger.innerHTML = ic(open ? "x" : "menu");
+  function setTheme(theme) {
+    document.documentElement.dataset.theme = theme;
+    try { localStorage.setItem("horizon-updates-theme", theme); } catch (_) { /* ignore */ }
+    const button = $("#themeToggle");
+    if (button) {
+      const next = theme === "dark" ? "light" : "dark";
+      button.setAttribute("aria-label", `Switch to ${next} theme`);
+      button.setAttribute("title", `Switch to ${next} theme`);
+      button.innerHTML = theme === "dark" ? '<svg class="ic"><use href="#i-sun"/></svg>' : '<svg class="ic"><use href="#i-moon"/></svg>';
+    }
+  }
+
+  // Theme preference. Dark is the designed default; user's choice is remembered locally.
+  let preferredTheme = "dark";
+  try {
+    const savedTheme = localStorage.getItem("horizon-updates-theme");
+    if (savedTheme === "dark" || savedTheme === "light") preferredTheme = savedTheme;
+  } catch (_) { /* ignore */ }
+  setTheme(preferredTheme);
+  $("#themeToggle")?.addEventListener("click", () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+
+  // Navigation and scroll utilities.
+  const header = $("#siteHeader");
+  const navLinks = $("#navLinks");
+  const menuToggle = $("#menuToggle");
+  const backTop = $("#backTop");
+  const progress = $("#scrollProgress");
+  function updateScrollUI() {
+    const y = window.scrollY || 0;
+    header?.classList.toggle("scrolled", y > 8);
+    backTop?.classList.toggle("visible", y > 650);
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    if (progress) progress.style.width = `${max > 0 ? Math.min(100, (y / max) * 100) : 0}%`;
+  }
+  updateScrollUI();
+  window.addEventListener("scroll", updateScrollUI, { passive: true });
+  menuToggle?.addEventListener("click", () => {
+    const open = navLinks.classList.toggle("open");
+    menuToggle.setAttribute("aria-expanded", String(open));
+    menuToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    menuToggle.innerHTML = open ? '<svg class="ic"><use href="#i-x"/></svg>' : '<svg class="ic"><use href="#i-menu"/></svg>';
   });
-  links.addEventListener("click", (e) => {
-    if (e.target.closest("a")) { links.classList.remove("open"); burger.setAttribute("aria-expanded", "false"); burger.innerHTML = ic("menu"); }
+  navLinks?.addEventListener("click", (event) => {
+    if (event.target.closest("a")) {
+      navLinks.classList.remove("open");
+      menuToggle?.setAttribute("aria-expanded", "false");
+      if (menuToggle) menuToggle.innerHTML = '<svg class="ic"><use href="#i-menu"/></svg>';
+    }
   });
+  backTop?.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
   $("#year").textContent = new Date().getFullYear();
 
-  const rev = $$(".reveal");
+  // Mark the visible section in the desktop/mobile navigation.
   if ("IntersectionObserver" in window) {
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: 0.12 });
-    rev.forEach((el) => io.observe(el));
-  } else rev.forEach((el) => el.classList.add("in"));
+    const observed = $$('main section[id]');
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          $$(".nav-links a").forEach((link) => link.classList.toggle("active", link.getAttribute("href") === `#${entry.target.id}`));
+        }
+      });
+    }, { rootMargin: "-28% 0px -62% 0px" });
+    observed.forEach((section) => sectionObserver.observe(section));
+  }
 
-  // avatar fallback
-  document.addEventListener("error", (e) => {
-    const t = e.target;
-    if (t && t.tagName === "IMG" && t.dataset.av) { delete t.dataset.av; t.src = "logo.png"; }
-  }, true);
-
-  // interactive mockups
-  $$("[data-tabs]").forEach((root) => {
-    root.addEventListener("click", (e) => {
-      const tog = e.target.closest(".tog");
-      if (tog && root.contains(tog)) { tog.classList.toggle("on"); return; }
-      const b = e.target.closest("[data-tab]");
-      if (!b || !root.contains(b)) return;
-      const id = b.getAttribute("data-tab");
-      $$("[data-tab]", root).forEach((x) => x.classList.toggle("on", x === b));
-      $$("[data-panel]", root).forEach((p) => p.classList.toggle("on", p.getAttribute("data-panel") === id));
+  function apkAssets(release, legacy = false) {
+    return (release?.assets || []).filter((asset) => /\.apk$/i.test(asset.name || "")).map((asset) => {
+      const match = (asset.name || "").match(/(arm64-v8a|armeabi-v7a|x86_64|x86)/i);
+      return { ...asset, abi: match ? match[1].toLowerCase() : "apk", legacy };
     });
-  });
-
-  function countTo(el, to) {
-    if (!el) return;
-    const from = 0, dur = 900, t0 = performance.now();
-    if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) { el.textContent = to; return; }
-    (function step(t) {
-      const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
-      el.textContent = Math.round(from + (to - from) * e);
-      if (p < 1) requestAnimationFrame(step);
-    })(t0);
   }
 
-  /* ---------- releases ---------- */
-  let RELS = FB_REL.map(fbRelease);
-  let filter = "all";
-
-  function abiBtn(r, a, withNote, rec) {
-    const x = r.apks[a.key];
-    if (!x) return "";
-    return '<a class="abi-btn' + (rec ? " rec" : "") + '" href="' + esc(x.url) + '" target="_blank" rel="noopener" title="' + esc(a.note) + '">' +
-      ic("download") + "<b>" + a.key + "</b>" +
-      (withNote ? '<i class="abi-note">' + (rec ? "Recommended" : esc(a.note)) + "</i>" : "") +
-      "<small>" + fmtSize(x.size) + "</small></a>";
+  function chooseCurrentApk(release) {
+    const assets = apkAssets(release).sort((a, b) => {
+      const order = ["arm64-v8a", "armeabi-v7a", "x86_64", "x86"];
+      return order.indexOf(a.abi) - order.indexOf(b.abi);
+    });
+    return assets.find((asset) => asset.abi === "arm64-v8a") || assets[0] || null;
   }
 
-  function renderLatest() {
-    const l = RELS.find((r) => !r.pre) || RELS[0];
-    if (!l) return;
-    const ver = l.tag.replace(/^v/, "");
-    $("#heroVer").textContent = l.tag;
-    $("#heroDate").textContent = "Published " + fmtDate(l.date);
-    $("#heroAbis").innerHTML = ABIS.map((a, i) => abiBtn(l, a, false, i === 0)).join("");
-    $("#stVer").textContent = ver;
-    $("#dlVer").textContent = ver;
-    $("#dlDate").textContent = fmtDate(l.date);
-    $("#dlAbis").innerHTML = ABIS.map((a, i) => abiBtn(l, a, true, i === 0)).join("");
-    $("#dlSums").href = l.sums || l.url;
+  function renderCurrentDownload(release) {
+    const version = release?.tag_name || "v0.2.3";
+    const apk = chooseCurrentApk(release);
+    const releaseURL = release?.html_url || STARLING_RELEASES;
+    $("#heroStarlingVersion").textContent = `Starling ${version}`;
+    $("#starlingTag").textContent = version;
+    $("#statStarling").textContent = version.replace(/^v/, "");
+    $("#downloadStarlingVersion").textContent = version;
+    if (release?.published_at) $("#heroStarlingDate").textContent = `Published ${formatDate(release.published_at)}`;
+    if (apk) {
+      $("#currentApkName").textContent = apk.name;
+      $("#currentApkMeta").textContent = `${apk.abi} · ${formatSize(apk.size)} · 64-bit Android build`;
+      $("#currentApkButton").href = apk.browser_download_url;
+      $("#currentApkButton").setAttribute("aria-label", `Download ${apk.name}`);
+      $("#starlingMainDownload").href = apk.browser_download_url;
+    } else {
+      $("#currentApkName").textContent = "Open the current release assets";
+      $("#currentApkMeta").textContent = "Select the APK listed by the project";
+      $("#currentApkButton").href = releaseURL;
+      $("#starlingMainDownload").href = releaseURL;
+    }
   }
 
-  function renderReleases() {
-    const list = $("#relList");
-    const latest = RELS.find((r) => !r.pre);
-    const rows = RELS.filter((r) => filter === "all" || (filter === "pre" ? r.pre : !r.pre));
-    if (!rows.length) { list.innerHTML = '<div class="empty">No releases in this filter.</div>'; return; }
-    list.innerHTML = rows.map((r) => {
-      const isLatest = latest && r.tag === latest.tag;
-      const btns = ABIS.map((a, i) => abiBtn(r, a, true, i === 0)).join("");
-      return '<article class="rel' + (isLatest ? " latest open" : "") + '">' +
-        '<button class="rel-head" type="button" aria-expanded="' + (isLatest ? "true" : "false") + '">' +
-        "<div><h3>" + esc(r.name) +
-        (isLatest ? '<span class="tag tag-new">Latest</span>' : "") +
-        (r.pre ? '<span class="tag tag-pre">Pre-release</span>' : '<span class="tag tag-live">Stable</span>') +
-        "</h3><small>" + esc(r.tag) + " &middot; " + fmtDate(r.date) + "</small></div>" +
-        ic("chevron", "chev") + "</button>" +
-        '<div class="rel-body"><div class="abi-list">' + btns + "</div>" +
-        '<div class="rel-foot"><a class="btn btn-ghost btn-sm" href="' + esc(r.url) + '" target="_blank" rel="noopener">' + ic("book") + " Release notes</a>" +
-        (r.sums ? '<a class="btn btn-ghost btn-sm" href="' + esc(r.sums) + '" target="_blank" rel="noopener">' + ic("hash") + " SHA256</a>" : "") +
-        "</div></div></article>";
+  function renderLegacyDownload(release) {
+    const assets = apkAssets(release, true);
+    const names = {
+      "arm64-v8a": "ARM64 · most modern Android phones",
+      "armeabi-v7a": "ARMv7 · 32-bit ARM devices",
+      "x86_64": "x86_64 · 64-bit emulators",
+      "x86": "x86 · 32-bit emulators"
+    };
+    const container = $("#legacyApks");
+    if (!assets.length) {
+      container.innerHTML = `<a class="abi-link" href="${escapeHTML(release?.html_url || LEGACY_RELEASES)}" target="_blank" rel="noopener"><span>Open v0.7.8 release assets</span><svg class="ic"><use href="#i-arrow-up-right"/></svg></a>`;
+      return;
+    }
+    const sorted = assets.sort((a, b) => ["arm64-v8a", "armeabi-v7a", "x86_64", "x86"].indexOf(a.abi) - ["arm64-v8a", "armeabi-v7a", "x86_64", "x86"].indexOf(b.abi));
+    container.innerHTML = sorted.map((asset) => `
+      <a class="abi-link" href="${escapeHTML(asset.browser_download_url)}" target="_blank" rel="noopener" title="${escapeHTML(asset.name)}">
+        <span><strong>${escapeHTML(asset.abi)}</strong> · ${escapeHTML(names[asset.abi] || "APK build")}</span>
+        <small>${formatSize(asset.size)}</small>
+      </a>`).join("");
+  }
+
+  function shortBody(body) {
+    if (!body) return "Open the release page for its full changelog and installation details.";
+    return String(body)
+      .replace(/<[^>]*>/g, " ")
+      .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+      .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+      .replace(/^\s{0,3}#{1,6}\s*/gm, "")
+      .replace(/^\s*[-*+]\s*/gm, "• ")
+      .replace(/`([^`]+)`/g, "$1")
+      .replace(/\r/g, "")
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .slice(0, 4)
+      .join("\n")
+      .slice(0, 520);
+  }
+
+  let activeReleaseTab = "starling";
+  let releaseSearchText = "";
+  let starlingReleases = FALLBACK_STARLING;
+  let legacyReleases = FALLBACK_LEGACY;
+
+  function getActiveReleases() {
+    return activeReleaseTab === "starling" ? starlingReleases : legacyReleases;
+  }
+
+  function renderReleaseList() {
+    const list = $("#releaseList");
+    const all = getActiveReleases();
+    const query = releaseSearchText.trim().toLowerCase();
+    const releases = all.filter((release) => {
+      const searchable = `${release.name || ""} ${release.tag_name || ""} ${release.body || ""}`.toLowerCase();
+      return !query || searchable.includes(query);
+    });
+    if (!releases.length) {
+      list.innerHTML = '<div class="empty-card">No releases match that search. Try a version number or a shorter keyword.</div>';
+      return;
+    }
+    const latestTag = all[0]?.tag_name;
+    list.innerHTML = releases.slice(0, 12).map((release) => {
+      const latest = release.tag_name === latestTag;
+      const pre = !!release.prerelease;
+      const assets = (release.assets || []).filter((asset) => /\.apk$/i.test(asset.name || "")).slice(0, 6);
+      const assetHTML = assets.length ? `<div class="asset-list">${assets.map((asset) => `<a class="asset-link" href="${escapeHTML(asset.browser_download_url)}" target="_blank" rel="noopener"><svg class="ic"><use href="#i-download"/></svg>${escapeHTML(asset.name)} · ${formatSize(asset.size)}</a>`).join("")}</div>` : "";
+      const releaseURL = release.html_url || (activeReleaseTab === "starling" ? STARLING_RELEASES : LEGACY_RELEASES);
+      const checksum = (release.assets || []).find((asset) => /sha256/i.test(asset.name || ""));
+      return `<article class="release-item ${latest ? "latest open" : ""}">
+        <button class="release-head" type="button" aria-expanded="${latest ? "true" : "false"}">
+          <span class="release-mark"><svg class="ic"><use href="#i-tag"/></svg></span>
+          <span class="release-title"><strong>${escapeHTML(release.name || release.tag_name || "Release")}</strong><small>${escapeHTML(release.tag_name || "")} · ${formatDate(release.published_at)}</small></span>
+          <span class="release-badges">${latest ? '<i class="release-badge latest">LATEST</i>' : ""}${pre ? '<i class="release-badge pre">PRE-RELEASE</i>' : '<i class="release-badge">RELEASE</i>'}</span>
+          <svg class="ic release-chevron"><use href="#i-chevron"/></svg>
+        </button>
+        <div class="release-body"><p>${escapeHTML(shortBody(release.body))}</p>${assetHTML}<div class="release-actions"><a href="${escapeHTML(releaseURL)}" target="_blank" rel="noopener">Full release notes <svg class="ic"><use href="#i-arrow-up-right"/></svg></a>${checksum ? `<a href="${escapeHTML(checksum.browser_download_url)}" target="_blank" rel="noopener">SHA-256 checksums <svg class="ic"><use href="#i-arrow-up-right"/></svg></a>` : ""}</div></div>
+      </article>`;
     }).join("");
   }
 
-  $("#relList").addEventListener("click", (e) => {
-    const h = e.target.closest(".rel-head");
-    if (!h) return;
-    const card = h.parentElement, open = card.classList.toggle("open");
-    h.setAttribute("aria-expanded", open);
-  });
-  $("#relFilter").addEventListener("click", (e) => {
-    const b = e.target.closest(".chip");
-    if (!b) return;
-    filter = b.getAttribute("data-f");
-    $$(".chip", $("#relFilter")).forEach((c) => c.classList.toggle("on", c === b));
-    renderReleases();
+  $("#releaseList").addEventListener("click", (event) => {
+    const button = event.target.closest(".release-head");
+    if (!button) return;
+    const item = button.closest(".release-item");
+    const open = item.classList.toggle("open");
+    button.setAttribute("aria-expanded", String(open));
   });
 
-  renderLatest();
-  renderReleases();
-
-  getJSON(API + "/releases?per_page=30", 600000).then((data) => {
-    const out = data.filter((r) => !r.draft).map((r) => {
-      const apks = {}; let sums = null;
-      (r.assets || []).forEach((a) => {
-        const m = a.name.match(/-(arm64-v8a|armeabi-v7a|x86_64|x86)\.apk$/i);
-        if (m) apks[m[1].toLowerCase()] = { url: a.browser_download_url, size: a.size };
-        else if (/sha256/i.test(a.name)) sums = a.browser_download_url;
+  $$("[data-release-tab]").forEach((button) => {
+    button.addEventListener("click", () => {
+      activeReleaseTab = button.dataset.releaseTab;
+      $$("[data-release-tab]").forEach((tab) => {
+        const active = tab === button;
+        tab.classList.toggle("active", active);
+        tab.setAttribute("aria-selected", String(active));
       });
-      return { tag: r.tag_name, name: r.name || r.tag_name, date: r.published_at, pre: !!r.prerelease, url: r.html_url, apks: apks, sums: sums };
-    }).filter((r) => Object.keys(r.apks).length);
-    if (out.length) { RELS = out; renderLatest(); renderReleases(); }
-  }).catch(() => {});
-
-  /* ---------- repo stats ---------- */
-  getJSON(API, 600000).then((d) => {
-    if (d && d.stargazers_count != null) { countTo($("#stStars"), d.stargazers_count); countTo($("#stForks"), d.forks_count); }
-  }).catch(() => {});
-
-  /* ---------- contributors ---------- */
-  let CONTRIB = FB_CONTRIB.slice();
-  let expanded = false, query = "";
-  const TOP = 8, FIRST = 40;
-  const av = (login, s) => "https://github.com/" + encodeURIComponent(login) + ".png?size=" + s;
-
-  function renderContrib() {
-    const max = CONTRIB[0] ? CONTRIB[0].c : 1;
-    $("#topContrib").innerHTML = CONTRIB.slice(0, TOP).map((u, i) =>
-      '<a class="tc" href="https://github.com/' + esc(u.login) + '" target="_blank" rel="noopener">' +
-      '<span class="rank">#' + (i + 1) + "</span>" +
-      '<img data-av="1" loading="lazy" decoding="async" width="76" height="76" alt="" src="' + av(u.login, 152) + '">' +
-      "<b>" + esc(u.login) + "</b><small>" + u.c.toLocaleString() + " commits</small>" +
-      '<span class="meter"><i style="width:' + Math.max(6, Math.sqrt(u.c / max) * 100).toFixed(0) + '%"></i></span></a>'
-    ).join("");
-
-    const q = query.trim().toLowerCase();
-    let pool = q ? CONTRIB.filter((u) => u.login.toLowerCase().includes(q)) : CONTRIB.slice(TOP);
-    const total = pool.length;
-    if (!q && !expanded) pool = pool.slice(0, FIRST);
-    $("#wall").innerHTML = pool.length ? pool.map((u) =>
-      '<a class="cw" href="https://github.com/' + esc(u.login) + '" target="_blank" rel="noopener">' +
-      '<img data-av="1" loading="lazy" decoding="async" width="36" height="36" alt="" src="' + av(u.login, 72) + '">' +
-      "<span><b>" + esc(u.login) + "</b><small>" + u.c.toLocaleString() + "</small></span></a>"
-    ).join("") : '<div class="empty" style="grid-column:1/-1">No contributor matches &ldquo;' + esc(query) + "&rdquo;.</div>";
-    $("#cCount").textContent = q ? total + " match" + (total === 1 ? "" : "es") : "Showing " + pool.length + " of " + (CONTRIB.length - TOP) + " more";
-    const more = $("#cMore");
-    more.style.display = q || CONTRIB.length - TOP <= FIRST ? "none" : "";
-    more.textContent = expanded ? "Show fewer" : "Show everyone";
-    $("#contribTitle").textContent = CONTRIB.length + " people.";
-    $("#stContrib").setAttribute("data-count", CONTRIB.length);
-  }
-  renderContrib();
-  countTo($("#stContrib"), CONTRIB.length);
-
-  $("#cSearch").addEventListener("input", (e) => { query = e.target.value; renderContrib(); });
-  $("#cMore").addEventListener("click", () => { expanded = !expanded; renderContrib(); });
-
-  getJSON(API + "/contributors?per_page=100", 600000).then((data) => {
-    const out = data.filter((u) => u.login && !/^noreply$/i.test(u.login) && u.type !== "Bot")
-      .map((u) => ({ login: u.login, c: u.contributions }));
-    if (out.length > 10) { CONTRIB = out; renderContrib(); countTo($("#stContrib"), out.length); }
-  }).catch(() => {});
-
-  /* ---------- video ---------- */
-  const frame = $("#videoFrame"), playBtn = $("#playBtn"), hint = $("#videoHint");
-  function embedFor(url) {
-    const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/);
-    if (yt) return '<iframe src="https://www.youtube.com/embed/' + yt[1] + '?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Horizon video"></iframe>';
-    if (/\.(mp4|webm|ogg)(\?|$)/i.test(url)) return '<video src="' + esc(url) + '" controls autoplay playsinline></video>';
-    return null;
-  }
-  if (!VIDEO_URL) hint.textContent = "Video coming soon";
-  playBtn.addEventListener("click", () => {
-    const html = VIDEO_URL && embedFor(VIDEO_URL);
-    if (html) frame.innerHTML = html;
-    else hint.textContent = "Video coming soon";
+      $("#releaseExternal").href = activeReleaseTab === "starling" ? STARLING_RELEASES : LEGACY_RELEASES;
+      $("#releaseStatus").innerHTML = `<i class="status-dot ${activeReleaseTab === "starling" ? "green" : "amber"}"></i> ${activeReleaseTab === "starling" ? "Current Starling release history" : "Archived Horizon Android release history"}`;
+      releaseSearchText = "";
+      $("#releaseSearch").value = "";
+      renderReleaseList();
+    });
   });
+  $("#releaseSearch").addEventListener("input", (event) => {
+    releaseSearchText = event.target.value;
+    renderReleaseList();
+  });
+
+  async function loadReleaseData() {
+    // The page remains useful from verified fallback data if GitHub's API is rate-limited.
+    renderCurrentDownload(FALLBACK_STARLING[0]);
+    renderLegacyDownload(FALLBACK_LEGACY[0]);
+    renderReleaseList();
+
+    const results = await Promise.allSettled([
+      getJSON(`${API}${STARLING_REPO}/releases?per_page=12`),
+      getJSON(`${API}${LEGACY_REPO}/releases?per_page=12`)
+    ]);
+    if (results[0].status === "fulfilled" && Array.isArray(results[0].value)) {
+      const current = results[0].value.filter((release) => !release.draft);
+      if (current.length) {
+        starlingReleases = current;
+        renderCurrentDownload(current[0]);
+      }
+    }
+    if (results[1].status === "fulfilled" && Array.isArray(results[1].value)) {
+      const archived = results[1].value.filter((release) => !release.draft);
+      if (archived.length) {
+        legacyReleases = archived;
+        const stable = archived.find((release) => release.tag_name === "v0.7.8") || archived[0];
+        renderLegacyDownload(stable);
+      }
+    }
+    const isCurrentLive = results[0].status === "fulfilled";
+    const isLegacyLive = results[1].status === "fulfilled";
+    const status = $("#releaseStatus");
+    status.innerHTML = `<i class="status-dot ${isCurrentLive || isLegacyLive ? "green" : "amber"}"></i> ${isCurrentLive && isLegacyLive ? "Live GitHub data · refreshed just now" : "Using saved fallback data · open GitHub to verify"}`;
+    renderReleaseList();
+  }
+
+  async function loadContributors() {
+    const container = $("#contributorsList");
+    try {
+      const contributors = await getJSON(`${API}${CONTRIBUTORS_REPO}/contributors?per_page=100`);
+      if (!Array.isArray(contributors) || !contributors.length) throw new Error("No contributor data");
+      const people = contributors.filter((person) => person.login && person.type !== "Bot").slice(0, 16);
+      $("#statContributors").textContent = contributors.length >= 100 ? "100+" : String(contributors.length);
+      container.innerHTML = people.map((person) => `
+        <a class="contributor-chip" href="https://github.com/${encodeURIComponent(person.login)}" target="_blank" rel="noopener" title="${escapeHTML(person.contributions || 0)} contributions">
+          <img src="https://github.com/${encodeURIComponent(person.login)}.png?size=54" alt="" loading="lazy" width="27" height="27">
+          <span>${escapeHTML(person.login)}</span>
+        </a>`).join("");
+    } catch (_) {
+      $("#statContributors").textContent = "Open";
+      container.innerHTML = '<a class="text-link" href="https://github.com/starling-client/starling/graphs/contributors" target="_blank" rel="noopener">View the preserved GitHub contributor graph <svg class="ic"><use href="#i-arrow-up-right"/></svg></a>';
+    }
+  }
+
+  // Load the project video only after the visitor requests it.
+  $("#playVideo").addEventListener("click", () => {
+    const frame = $("#videoFrame");
+    const iframe = document.createElement("iframe");
+    iframe.src = "https://www.youtube-nocookie.com/embed/gWK01tGlyFI?autoplay=1&rel=0";
+    iframe.title = "Starling Android gameplay showcase";
+    iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+    iframe.allowFullscreen = true;
+    iframe.loading = "lazy";
+    frame.replaceChildren(iframe);
+  });
+
+  // Progressive enhancement: install a tiny offline cache for the static site shell.
+  if ("serviceWorker" in navigator && location.protocol === "https:") {
+    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}), { once: true });
+  }
+
+  loadReleaseData();
+  loadContributors();
 })();
-     

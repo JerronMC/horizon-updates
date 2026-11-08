@@ -1,0 +1,13 @@
+{
+  "name": "Horizon Updates — Community Hub",
+  "short_name": "Horizon Updates",
+  "description": "An independent community hub tracking Horizon, Starling and Android releases.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#090b13",
+  "theme_color": "#090b13",
+  "icons": [
+    { "src": "logo.png", "sizes": "60x60", "type": "image/png", "purpose": "any" }
+  ]
+}
