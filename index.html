@@ -4,171 +4,486 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Horizon UPDATES — Rust Edition Fan Page</title>
-  <meta name="description" content="Fan page for Horizon, the Rust Edition Minecraft launcher for Android and PC. Downloads, release versions, video and more.">
+  <meta name="description" content="Unofficial fan page for Horizon, the Minecraft launcher rebuilt in Rust, for Android and PC. Latest releases, APK downloads, contributors, video and more.">
+  <meta name="theme-color" content="#100a1f">
+  <meta property="og:title" content="Horizon UPDATES — Rust Edition Fan Page">
+  <meta property="og:description" content="Latest Horizon releases, APK downloads for Android, PC downloads, contributors and more.">
+  <meta property="og:image" content="logo.png">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header class="topbar">
-  <a class="brand" href="#top"><span class="logo-block"></span> HORIZON <small>UPDATES</small></a>
-  <button class="burger" id="burger" aria-label="Menu" aria-expanded="false">&#9776;</button>
-  <nav id="nav">
-    <a href="#downloads">Downloads</a>
-    <a href="#releases">Releases</a>
-    <a href="#video">Video</a>
-    <a href="#features">Features</a>
-    <a href="#ui">Window &amp; Mobile</a>
-    <a href="#faq">FAQ</a>
-  </nav>
+<!-- ========== SVG ICON SPRITE ========== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol>
+    <symbol id="i-github" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></symbol>
+    <symbol id="i-laptop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></symbol>
+    <symbol id="i-windows" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.5 10.5 4.4v7.1H3zM11.7 4.2 21 3v8.5h-9.3zM3 12.5h7.5v7.1L3 18.5zM11.7 12.5H21V21l-9.3-1.2z"/></symbol>
+    <symbol id="i-android" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16a7 7 0 0 1 14 0z"/><path d="m8 5.5 1.6 2.6M16 5.5l-1.6 2.6"/><path d="M9.5 12.2h.01M14.5 12.2h.01"/><path d="M7 19v1.5M17 19v1.5"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></symbol>
+    <symbol id="i-gamepad" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="10" y1="12" y2="12"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="15" x2="15.01" y1="13" y2="13"/><line x1="18" x2="18.01" y1="11" y2="11"/><rect width="20" height="12" x="2" y="6" rx="2"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+    <symbol id="i-fork" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9"/><path d="M12 12v3"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
+    <symbol id="i-gauge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-hash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16"/><path d="M4 15h16"/><path d="M10 3 8 21"/><path d="M16 3l-2 18"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+    <symbol id="i-volume" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.364 18.364a9 9 0 0 0 0-12.728"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></symbol>
+  </defs>
+</svg>
+
+<!-- ========== NAVBAR ========== -->
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top" aria-label="Horizon Updates home">
+      <img src="logo.png" width="32" height="32" alt="Horizon logo">
+      <span>Horizon</span><em class="pill-mini">UPDATES</em>
+    </a>
+    <nav class="links" id="links" aria-label="Main">
+      <a href="#about">About</a>
+      <a href="#android">Android</a>
+      <a href="#downloads">Downloads</a>
+      <a href="#releases">Releases</a>
+      <a href="#preview">Preview</a>
+      <a href="#video">Video</a>
+      <a href="#contributors">Contributors</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-act">
+      <a class="icon-btn" href="https://github.com/starling-client/starling" target="_blank" rel="noopener" aria-label="GitHub repository"><svg class="ic"><use href="#i-github"/></svg></a>
+      <a class="btn btn-primary btn-sm" href="#downloads"><svg class="ic"><use href="#i-download"/></svg> Download</a>
+      <button class="icon-btn burger" id="burger" aria-label="Open menu" aria-expanded="false"><svg class="ic"><use href="#i-menu"/></svg></button>
+    </div>
+  </div>
 </header>
 
 <main id="top">
 
-  <!-- HERO -->
+  <!-- ========== HERO ========== -->
   <section class="hero">
-    <div class="sky">
-      <span class="cloud c1"></span><span class="cloud c2"></span><span class="cloud c3"></span>
-      <div class="sun"></div>
-    </div>
-    <div class="hero-inner">
-      <span class="badge rust">&#9881; RUST EDITION</span>
-      <h1 class="title">HORIZON<br><span>UPDATES</span></h1>
-      <p class="tagline">The fan page for the fast Minecraft launcher for <b>Android</b> and <b>PC</b>.</p>
-      <div class="cta">
-        <a class="mc-btn green" href="https://github.com/starling-client/starling/releases" target="_blank" rel="noopener">&#128241; Download APK</a>
-        <a class="mc-btn" href="https://playhorizon.dev" target="_blank" rel="noopener">&#128187; Download for PC / Mac</a>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <a class="eyebrow" href="https://playhorizon.dev" target="_blank" rel="noopener">
+          <img src="logo.png" width="18" height="18" alt="">
+          <span>Minecraft: Java Edition 26.3</span><i></i><span class="rust">Written in Rust</span>
+        </a>
+        <h1>Horizon <span class="grad">Updates.</span><br>The game you know, rebuilt in Rust.</h1>
+        <p class="lead">The fan page for Horizon &mdash; the fast, native Minecraft launcher for <b>Android</b> and <b>PC</b>. Grab the newest APK, see every release, and meet the people building it.</p>
+        <div class="cta">
+          <a class="btn btn-primary btn-lg" href="#downloads"><svg class="ic"><use href="#i-android"/></svg> Download for Android</a>
+          <a class="btn btn-ghost btn-lg" href="https://playhorizon.dev" target="_blank" rel="noopener"><svg class="ic"><use href="#i-monitor"/></svg> Download for PC</a>
+        </div>
+        <ul class="hero-badges">
+          <li><svg class="ic"><use href="#i-cpu"/></svg> Native Rust engine</li>
+          <li><svg class="ic"><use href="#i-shield"/></svg> Open source</li>
+          <li><svg class="ic"><use href="#i-refresh"/></svg> Frequent updates</li>
+        </ul>
       </div>
-      <p class="latest-line" id="latestLine">Checking latest version&hellip;</p>
-    </div>
-    <div class="grass"></div>
-  </section>
 
-  <!-- DOWNLOADS -->
-  <section id="downloads" class="block dirt">
-    <h2 class="heading">Downloads</h2>
-    <div class="grid two">
-      <article class="card reveal">
-        <div class="card-icon android"></div>
-        <h3>Android</h3>
-        <p>Grab the latest APK straight from GitHub Releases. Enable &ldquo;Install unknown apps&rdquo; for your browser or file manager, then install.</p>
-        <a class="mc-btn green wide" href="https://github.com/starling-client/starling/releases" target="_blank" rel="noopener">Download APK</a>
-        <a class="mc-btn dark wide" id="latestApk" href="https://github.com/starling-client/starling/releases/latest" target="_blank" rel="noopener">Latest release</a>
-      </article>
-      <article class="card reveal">
-        <div class="card-icon pc"></div>
-        <h3>Windows &bull; macOS &bull; Linux</h3>
-        <p>Desktop builds are on the official site. Pick your platform and you are ready to play.</p>
-        <a class="mc-btn wide" href="https://playhorizon.dev" target="_blank" rel="noopener">playhorizon.dev</a>
-        <div class="chips"><span>Windows</span><span>macOS</span><span>Linux</span></div>
-      </article>
+      <aside class="hero-card" aria-label="Latest Android release">
+        <div class="hc-top">
+          <img src="logo.png" width="48" height="48" alt="">
+          <div>
+            <small>Latest Android release</small>
+            <strong id="heroVer">v0.7.8</strong>
+          </div>
+          <span class="tag tag-live" id="heroLive">Stable</span>
+        </div>
+        <p class="hc-date"><svg class="ic"><use href="#i-calendar"/></svg> <span id="heroDate">&mdash;</span></p>
+        <div class="hc-abis" id="heroAbis"></div>
+        <a class="hc-link" href="https://github.com/starling-client/starling/releases" target="_blank" rel="noopener">All releases on GitHub <svg class="ic"><use href="#i-link"/></svg></a>
+      </aside>
     </div>
   </section>
 
-  <!-- RELEASES -->
-  <section id="releases" class="block stone">
-    <h2 class="heading">Release Versions</h2>
-    <p class="sub">Live from GitHub &mdash; newest first.</p>
-    <div class="releases" id="releaseList">
-      <div class="loading">Loading releases&hellip;</div>
+  <!-- ========== STATS ========== -->
+  <section class="stats">
+    <div class="wrap stats-grid">
+      <div class="stat"><svg class="ic"><use href="#i-tag"/></svg><b id="stVer">0.7.8</b><span>Latest version</span></div>
+      <div class="stat"><svg class="ic"><use href="#i-users"/></svg><b id="stContrib" data-count="86">86</b><span>Contributors</span></div>
+      <div class="stat"><svg class="ic"><use href="#i-star"/></svg><b id="stStars" data-count="611">611</b><span>GitHub stars</span></div>
+      <div class="stat"><svg class="ic"><use href="#i-fork"/></svg><b id="stForks" data-count="116">116</b><span>Forks</span></div>
     </div>
-    <p class="center"><a class="mc-btn dark" href="https://github.com/starling-client/starling/releases" target="_blank" rel="noopener">All releases on GitHub</a></p>
   </section>
 
-  <!-- VIDEO -->
-  <section id="video" class="block dirt">
-    <h2 class="heading">Watch</h2>
-    <div class="video-frame reveal" id="videoFrame">
-      <div class="video-placeholder" id="videoPlaceholder">
-        <button class="play" id="playBtn" aria-label="Play video">&#9654;</button>
-        <p>Horizon showcase video</p>
+  <!-- ========== ABOUT ========== -->
+  <section id="about" class="section">
+    <div class="wrap">
+      <header class="sec-head reveal">
+        <span class="kicker">What it is</span>
+        <h2>Same game. <span class="grad">Native speed.</span></h2>
+        <p>Horizon rebuilds the Minecraft: Java Edition experience as a native Rust engine, checked against the original with differential tests. The Android port brings it to your phone.</p>
+      </header>
+
+      <div class="grid3">
+        <article class="card feat reveal">
+          <div class="ico"><svg class="ic"><use href="#i-box"/></svg></div>
+          <h3>Your own copy</h3>
+          <p>A standalone engine you install and run &mdash; no Java runtime to babysit, no heavyweight launcher stack.</p>
+        </article>
+        <article class="card feat reveal">
+          <div class="ico"><svg class="ic"><use href="#i-laptop"/></svg></div>
+          <h3>Native on three platforms</h3>
+          <p>Builds for Windows, macOS and Linux on desktop &mdash; plus a Vulkan-powered build for Android.</p>
+        </article>
+        <article class="card feat reveal">
+          <div class="ico"><svg class="ic"><use href="#i-github"/></svg></div>
+          <h3>Open source</h3>
+          <p>Built in the open on GitHub with a growing community of contributors and frequent releases.</p>
+        </article>
+      </div>
+
+      <div class="bench card reveal" id="bench">
+        <div class="bench-head">
+          <div>
+            <span class="kicker">Benchmarks</span>
+            <h3>3&times; the frame rate</h3>
+          </div>
+          <small>Figures as published on playhorizon.dev. Your results will vary by device.</small>
+        </div>
+        <div class="bar-row">
+          <label>Horizon <em>Rust</em></label>
+          <div class="bar"><span class="fill hz" style="--w:100%"><b>150 fps</b></span></div>
+        </div>
+        <div class="bar-row">
+          <label>Standard launcher</label>
+          <div class="bar"><span class="fill std" style="--w:33.3%"><b>50 fps</b></span></div>
+        </div>
       </div>
     </div>
-    <p class="sub center">Tip: set your video link in <code>script.js</code> (<code>VIDEO_URL</code>).</p>
   </section>
 
-  <!-- FEATURES -->
-  <section id="features" class="block grass-bg">
-    <h2 class="heading">Features</h2>
-    <div class="grid four">
-      <div class="feature reveal"><i>&#9881;</i><h3>Rust Powered</h3><p>Built in Rust for a tiny footprint and quick startup.</p></div>
-      <div class="feature reveal"><i>&#9889;</i><h3>Fast Launch</h3><p>Jump into your world in seconds on PC or phone.</p></div>
-      <div class="feature reveal"><i>&#128230;</i><h3>Version Manager</h3><p>Keep many Minecraft versions and profiles side by side.</p></div>
-      <div class="feature reveal"><i>&#129521;</i><h3>Mods &amp; Packs</h3><p>Organise mods, resource packs and shaders.</p></div>
-      <div class="feature reveal"><i>&#128241;</i><h3>Android + PC</h3><p>One launcher family across your devices.</p></div>
-      <div class="feature reveal"><i>&#127912;</i><h3>Minecraft Style</h3><p>Blocky UI that feels right at home.</p></div>
-      <div class="feature reveal"><i>&#128260;</i><h3>Frequent Updates</h3><p>Fresh builds posted on GitHub Releases.</p></div>
-      <div class="feature reveal"><i>&#127381;</i><h3>Free Download</h3><p>Grab it from the links above, no fuss.</p></div>
+  <!-- ========== ANDROID ========== -->
+  <section id="android" class="section alt">
+    <div class="wrap">
+      <header class="sec-head reveal">
+        <span class="kicker">Horizon for Android</span>
+        <h2>Built for <span class="grad">touch.</span></h2>
+        <p>The Android port (Starling) ships Vulkan rendering, editable touch controls and sandboxed native mods.</p>
+      </header>
+
+      <div class="grid4">
+        <article class="card feat sm reveal"><div class="ico"><svg class="ic"><use href="#i-zap"/></svg></div><h3>Vulkan rendering</h3><p>Multiple render modes with resolution scaling to match your phone.</p></article>
+        <article class="card feat sm reveal"><div class="ico"><svg class="ic"><use href="#i-gamepad"/></svg></div><h3>Editable touch controls</h3><p>Move, resize and fade every button. Four schemes: joystick or D-pad with tap or crosshair aiming.</p></article>
+        <article class="card feat sm reveal"><div class="ico"><svg class="ic"><use href="#i-layers"/></svg></div><h3>Native .hmod mods</h3><p>Sandboxed code mods run on 64-bit builds. Resource packs are supported too.</p></article>
+        <article class="card feat sm reveal"><div class="ico"><svg class="ic"><use href="#i-users"/></svg></div><h3>Java multiplayer</h3><p>Join Java Edition servers with verified resource downloads.</p></article>
+        <article class="card feat sm reveal"><div class="ico"><svg class="ic"><use href="#i-lock"/></svg></div><h3>Keystore sign-in</h3><p>Account status is stored with the Android Keystore. Sign-in is still in development.</p></article>
+        <article class="card feat sm reveal"><div class="ico"><svg class="ic"><use href="#i-volume"/></svg></div><h3>Native audio &amp; haptics</h3><p>Low-latency AAudio sound, Android keyboard and clipboard, and phone vibration.</p></article>
+        <article class="card feat sm reveal"><div class="ico"><svg class="ic"><use href="#i-phone"/></svg></div><h3>Android 9 and up</h3><p>Requires a Vulkan-capable device. Builds for arm64, 32-bit ARM, x86 and x86_64.</p></article>
+        <article class="card feat sm reveal"><div class="ico"><svg class="ic"><use href="#i-image"/></svg></div><h3>Original resources</h3><p>The APK downloads original Minecraft resources from Mojang at runtime.</p></article>
+      </div>
+
+      <p class="note reveal"><svg class="ic"><use href="#i-book"/></svg> Not supported yet: source-only <code>.hnmod</code> mods, and Fabric/Forge Java code.</p>
     </div>
   </section>
 
-  <!-- UI SHOWCASE -->
-  <section id="ui" class="block stone">
-    <h2 class="heading">Window &amp; Mobile UI</h2>
-    <p class="sub">A look at the launcher layouts (illustrative mockups).</p>
-    <div class="ui-row">
+  <!-- ========== DOWNLOADS ========== -->
+  <section id="downloads" class="section">
+    <div class="wrap">
+      <header class="sec-head reveal">
+        <span class="kicker">Get Horizon</span>
+        <h2>Download for <span class="grad">every device.</span></h2>
+        <p>Pick your platform. Android APKs come straight from GitHub Releases; desktop builds live on the official site.</p>
+      </header>
 
-      <!-- Window UI -->
-      <div class="window reveal">
-        <div class="win-bar"><span class="dots"><i></i><i></i><i></i></span><b>Horizon</b><span class="win-ctl">_ &#9633; &times;</span></div>
-        <div class="win-body">
-          <aside class="win-side">
-            <div class="side-item active">&#9654; Play</div>
-            <div class="side-item">&#128230; Versions</div>
-            <div class="side-item">&#129521; Mods</div>
-            <div class="side-item">&#127912; Skins</div>
-            <div class="side-item">&#9881; Settings</div>
-          </aside>
-          <div class="win-main">
-            <div class="news"><b>What's new</b><span>Rust Edition update is out!</span></div>
-            <div class="profile">
-              <label>Profile</label>
-              <div class="select">Latest release &#9662;</div>
+      <div class="dl-grid">
+        <article class="card dl reveal">
+          <div class="dl-head">
+            <div class="ico lg"><svg class="ic"><use href="#i-android"/></svg></div>
+            <div>
+              <h3>Android</h3>
+              <p>Version <b id="dlVer">0.7.8</b> &middot; <span id="dlDate">&mdash;</span></p>
             </div>
-            <div class="mc-btn green wide play-fake">PLAY</div>
-            <div class="bar"><span></span></div>
+          </div>
+          <div class="abi-list" id="dlAbis"></div>
+          <a class="btn btn-ghost btn-block" id="dlSums" href="https://github.com/starling-client/starling/releases/latest" target="_blank" rel="noopener"><svg class="ic"><use href="#i-hash"/></svg> SHA256 checksums</a>
+          <ol class="steps">
+            <li>Download the APK that matches your device.</li>
+            <li>Allow &ldquo;Install unknown apps&rdquo; for your browser or file manager.</li>
+            <li>Open the file, install, and launch Horizon.</li>
+          </ol>
+          <a class="btn btn-primary btn-block" href="https://github.com/starling-client/starling/releases" target="_blank" rel="noopener"><svg class="ic"><use href="#i-github"/></svg> Open GitHub Releases</a>
+        </article>
+
+        <article class="card dl reveal">
+          <div class="dl-head">
+            <div class="ico lg"><svg class="ic"><use href="#i-monitor"/></svg></div>
+            <div>
+              <h3>Windows, macOS &amp; Linux</h3>
+              <p>Desktop launcher from the official site</p>
+            </div>
+          </div>
+          <div class="plat-list">
+            <a class="plat" href="https://playhorizon.dev" target="_blank" rel="noopener"><svg class="ic"><use href="#i-windows"/></svg><span><b>Windows</b><small>x64 &amp; ARM</small></span><svg class="ic go"><use href="#i-link"/></svg></a>
+            <a class="plat" href="https://playhorizon.dev" target="_blank" rel="noopener"><svg class="ic"><use href="#i-laptop"/></svg><span><b>macOS</b><small>Apple Silicon &amp; Intel</small></span><svg class="ic go"><use href="#i-link"/></svg></a>
+            <a class="plat" href="https://playhorizon.dev" target="_blank" rel="noopener"><svg class="ic"><use href="#i-terminal"/></svg><span><b>Linux</b><small>x86_64</small></span><svg class="ic go"><use href="#i-link"/></svg></a>
+          </div>
+          <a class="btn btn-primary btn-block" href="https://playhorizon.dev" target="_blank" rel="noopener"><svg class="ic"><use href="#i-download"/></svg> playhorizon.dev</a>
+          <p class="fine">Downloads open on the official Horizon website.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== RELEASES ========== -->
+  <section id="releases" class="section alt">
+    <div class="wrap narrow">
+      <header class="sec-head reveal">
+        <span class="kicker">Changelog</span>
+        <h2>Release <span class="grad">versions.</span></h2>
+        <p>Pulled live from GitHub, newest first. Every release lists the APKs for each device type.</p>
+      </header>
+
+      <div class="chips" id="relFilter" role="tablist" aria-label="Filter releases">
+        <button class="chip on" data-f="all">All</button>
+        <button class="chip" data-f="stable">Stable</button>
+        <button class="chip" data-f="pre">Pre-release</button>
+      </div>
+
+      <div class="timeline" id="relList"></div>
+
+      <p class="center"><a class="btn btn-ghost" href="https://github.com/starling-client/starling/releases" target="_blank" rel="noopener"><svg class="ic"><use href="#i-github"/></svg> View all on GitHub</a></p>
+    </div>
+  </section>
+
+  <!-- ========== UI PREVIEW ========== -->
+  <section id="preview" class="section">
+    <div class="wrap">
+      <header class="sec-head reveal">
+        <span class="kicker">Interface</span>
+        <h2>Window &amp; <span class="grad">Mobile UI.</span></h2>
+        <p>Try the tabs. These are illustrative mockups of the desktop launcher and the Android app.</p>
+      </header>
+
+      <div class="ui-stage">
+
+        <!-- Desktop window -->
+        <div class="win reveal" data-tabs>
+          <div class="win-top">
+            <span class="traffic"><i></i><i></i><i></i></span>
+            <span class="win-title"><img src="logo.png" width="16" height="16" alt=""> Horizon</span>
+            <span class="win-spacer"></span>
+          </div>
+          <div class="win-body">
+            <nav class="win-nav" role="tablist" aria-label="Desktop launcher sections">
+              <button class="on" data-tab="play" role="tab"><svg class="ic"><use href="#i-play"/></svg> Play</button>
+              <button data-tab="versions" role="tab"><svg class="ic"><use href="#i-tag"/></svg> Versions</button>
+              <button data-tab="mods" role="tab"><svg class="ic"><use href="#i-layers"/></svg> Mods</button>
+              <button data-tab="settings" role="tab"><svg class="ic"><use href="#i-settings"/></svg> Settings</button>
+            </nav>
+            <div class="win-panels">
+
+              <section class="panel on" data-panel="play">
+                <div class="scene"><span class="scene-label">Minecraft: Java Edition 26.3</span></div>
+                <div class="play-row">
+                  <div class="field"><small>Profile</small><div class="select">Latest release <svg class="ic"><use href="#i-chevron"/></svg></div></div>
+                  <button class="btn btn-play" type="button"><svg class="ic"><use href="#i-play"/></svg> PLAY</button>
+                </div>
+                <div class="prog"><span></span></div>
+                <small class="muted">Verifying game files&hellip;</small>
+              </section>
+
+              <section class="panel" data-panel="versions">
+                <h4>Installed versions</h4>
+                <ul class="rows">
+                  <li><span><b>Release 26.3</b><small>Latest &middot; ready</small></span><em class="tag tag-live">Stable</em></li>
+                  <li><span><b>Release 26.2</b><small>Installed</small></span><em class="tag">Stable</em></li>
+                  <li><span><b>Snapshot</b><small>Experimental</small></span><em class="tag tag-pre">Pre</em></li>
+                </ul>
+              </section>
+
+              <section class="panel" data-panel="mods">
+                <h4>Mods &amp; packs</h4>
+                <ul class="rows">
+                  <li><span><b>Performance mod</b><small>.hmod &middot; native</small></span><i class="tog on"></i></li>
+                  <li><span><b>HUD tweaks</b><small>.hmod &middot; native</small></span><i class="tog on"></i></li>
+                  <li><span><b>Resource pack</b><small>Textures</small></span><i class="tog"></i></li>
+                </ul>
+              </section>
+
+              <section class="panel" data-panel="settings">
+                <h4>Settings</h4>
+                <ul class="rows">
+                  <li><span><b>Render distance</b></span><div class="slider"><span style="width:62%"></span></div></li>
+                  <li><span><b>Resolution scale</b></span><div class="slider"><span style="width:85%"></span></div></li>
+                  <li><span><b>Hardware rendering</b></span><i class="tog on"></i></li>
+                </ul>
+              </section>
+
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Mobile UI -->
-      <div class="phone reveal">
-        <div class="notch"></div>
-        <div class="phone-screen">
-          <div class="p-head">HORIZON</div>
-          <div class="p-card"><small>Selected</small><b>Latest release</b></div>
-          <div class="p-card"><small>Account</small><b>Steve</b></div>
-          <div class="mc-btn green wide play-fake">PLAY</div>
-          <div class="p-tabs"><span class="on">&#9654;</span><span>&#128230;</span><span>&#129521;</span><span>&#9881;</span></div>
+        <!-- Phone -->
+        <div class="phone reveal" data-tabs>
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="ph-panels">
+
+              <section class="panel on" data-panel="play">
+                <div class="ph-head"><img src="logo.png" width="28" height="28" alt=""><b>Horizon</b></div>
+                <div class="ph-scene"></div>
+                <div class="ph-card"><small>Account</small><b>Steve</b></div>
+                <div class="ph-card"><small>Version</small><b>Latest release</b></div>
+                <button class="btn btn-play btn-block" type="button"><svg class="ic"><use href="#i-play"/></svg> PLAY</button>
+              </section>
+
+              <section class="panel" data-panel="controls">
+                <div class="ph-head"><b>Touch controls</b></div>
+                <div class="pad">
+                  <div class="joy"><i></i></div>
+                  <div class="btns"><span>A</span><span>B</span><span>C</span></div>
+                  <div class="hotbar"><i></i><i></i><i></i><i></i><i></i></div>
+                </div>
+                <small class="muted center">Drag to move &middot; resize &middot; set opacity</small>
+              </section>
+
+              <section class="panel" data-panel="mods">
+                <div class="ph-head"><b>Mods</b></div>
+                <ul class="rows">
+                  <li><span><b>Performance mod</b><small>.hmod</small></span><i class="tog on"></i></li>
+                  <li><span><b>HUD tweaks</b><small>.hmod</small></span><i class="tog"></i></li>
+                </ul>
+              </section>
+
+              <section class="panel" data-panel="settings">
+                <div class="ph-head"><b>Settings</b></div>
+                <ul class="rows">
+                  <li><span><b>Resolution scale</b></span><div class="slider"><span style="width:70%"></span></div></li>
+                  <li><span><b>Auto-sprint</b></span><i class="tog on"></i></li>
+                  <li><span><b>Left-handed</b></span><i class="tog"></i></li>
+                </ul>
+              </section>
+
+            </div>
+            <nav class="ph-nav" role="tablist" aria-label="Mobile app sections">
+              <button class="on" data-tab="play" aria-label="Play"><svg class="ic"><use href="#i-play"/></svg></button>
+              <button data-tab="controls" aria-label="Controls"><svg class="ic"><use href="#i-gamepad"/></svg></button>
+              <button data-tab="mods" aria-label="Mods"><svg class="ic"><use href="#i-layers"/></svg></button>
+              <button data-tab="settings" aria-label="Settings"><svg class="ic"><use href="#i-settings"/></svg></button>
+            </nav>
+          </div>
         </div>
-      </div>
 
+      </div>
     </div>
   </section>
 
-  <!-- FAQ -->
-  <section id="faq" class="block dirt">
-    <h2 class="heading">FAQ</h2>
-    <div class="faq">
-      <details class="reveal"><summary>Where do I get the Android version?</summary><p>From the GitHub releases page. Download the latest <code>.apk</code> and install it.</p></details>
-      <details class="reveal"><summary>Where do I get Windows / Mac / Linux?</summary><p>Visit <a href="https://playhorizon.dev" target="_blank" rel="noopener">playhorizon.dev</a>.</p></details>
-      <details class="reveal"><summary>What does &ldquo;Rust Edition&rdquo; mean?</summary><p>It is the edition of the launcher written in Rust, aimed at speed and low resource use.</p></details>
-      <details class="reveal"><summary>Is this the official site?</summary><p>No. This is an unofficial fan page. Use the links above for official downloads.</p></details>
+  <!-- ========== VIDEO ========== -->
+  <section id="video" class="section alt">
+    <div class="wrap narrow">
+      <header class="sec-head reveal">
+        <span class="kicker">Watch</span>
+        <h2>See it <span class="grad">in action.</span></h2>
+      </header>
+      <div class="video card reveal" id="videoFrame">
+        <button class="video-poster" id="playBtn" type="button" aria-label="Play video">
+          <img src="logo.png" width="72" height="72" alt="">
+          <span class="vplay"><svg class="ic"><use href="#i-play"/></svg></span>
+          <b>Horizon showcase</b>
+          <small id="videoHint">Press play</small>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CONTRIBUTORS ========== -->
+  <section id="contributors" class="section">
+    <div class="wrap">
+      <header class="sec-head reveal">
+        <span class="kicker">Community</span>
+        <h2>Built by <span class="grad" id="contribTitle">86 people.</span></h2>
+        <p>Everyone who has committed to the Horizon Android repository, ranked by contributions. Avatars load from GitHub.</p>
+      </header>
+
+      <div class="top-grid" id="topContrib"></div>
+
+      <div class="c-tools">
+        <div class="search"><svg class="ic"><use href="#i-search"/></svg><input id="cSearch" type="search" placeholder="Search contributors" aria-label="Search contributors" autocomplete="off"></div>
+        <span class="muted" id="cCount"></span>
+      </div>
+      <div class="wall" id="wall"></div>
+      <p class="center"><button class="btn btn-ghost" id="cMore" type="button">Show everyone</button>
+      <a class="btn btn-ghost" href="https://github.com/starling-client/starling/graphs/contributors" target="_blank" rel="noopener"><svg class="ic"><use href="#i-github"/></svg> On GitHub</a></p>
+    </div>
+  </section>
+
+  <!-- ========== FAQ ========== -->
+  <section id="faq" class="section alt">
+    <div class="wrap narrow">
+      <header class="sec-head reveal">
+        <span class="kicker">Questions</span>
+        <h2>Good to <span class="grad">know.</span></h2>
+      </header>
+      <div class="faq">
+        <details class="reveal" open><summary>Which APK should I download?<svg class="ic"><use href="#i-chevron"/></svg></summary><p>Most modern phones need <b>arm64-v8a</b>. Older 32-bit phones use <b>armeabi-v7a</b>. The <b>x86</b> and <b>x86_64</b> builds are for emulators and some Chromebooks.</p></details>
+        <details class="reveal"><summary>Where do I get the PC version?<svg class="ic"><use href="#i-chevron"/></svg></summary><p>Desktop builds for Windows, macOS and Linux are on <a href="https://playhorizon.dev" target="_blank" rel="noopener">playhorizon.dev</a>.</p></details>
+        <details class="reveal"><summary>What does &ldquo;Rust Edition&rdquo; mean?<svg class="ic"><use href="#i-chevron"/></svg></summary><p>Horizon is a rebuild of the Minecraft: Java Edition experience as a native engine written in Rust, aimed at speed and low resource use.</p></details>
+        <details class="reveal"><summary>Does it include Minecraft?<svg class="ic"><use href="#i-chevron"/></svg></summary><p>The Android APK downloads the original Minecraft resources from Mojang at runtime. The project code itself does not bundle Minecraft assets.</p></details>
+        <details class="reveal"><summary>How do I check my download is genuine?<svg class="ic"><use href="#i-chevron"/></svg></summary><p>Each release includes a <code>SHA256SUMS.txt</code> file. Compare it with the checksum of the APK you downloaded.</p></details>
+        <details class="reveal"><summary>Is this the official site?<svg class="ic"><use href="#i-chevron"/></svg></summary><p>No. This is an unofficial fan page. For official information, use <a href="https://playhorizon.dev" target="_blank" rel="noopener">playhorizon.dev</a> and the GitHub repository.</p></details>
+      </div>
     </div>
   </section>
 
 </main>
 
-<footer>
-  <p>HORIZON UPDATES &mdash; Rust Edition Fan Page</p>
-  <p class="small">Unofficial fan site. Not affiliated with Mojang Studios, Microsoft or the Horizon developers. Minecraft is a trademark of Mojang Studios.</p>
-  <p class="small">
-    <a href="https://github.com/starling-client/starling/releases" target="_blank" rel="noopener">GitHub Releases</a> &bull;
-    <a href="https://playhorizon.dev" target="_blank" rel="noopener">playhorizon.dev</a> &bull;
-    &copy; <span id="year"></span>
-  </p>
+<!-- ========== FOOTER ========== -->
+<footer class="foot">
+  <div class="wrap foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="#top"><img src="logo.png" width="32" height="32" alt="Horizon logo"><span>Horizon</span><em class="pill-mini">UPDATES</em></a>
+      <p>An unofficial fan page for the Rust Edition Minecraft launcher on Android and PC.</p>
+    </div>
+    <div>
+      <h5>Project</h5>
+      <a href="https://playhorizon.dev" target="_blank" rel="noopener">playhorizon.dev</a>
+      <a href="https://github.com/starling-client/starling" target="_blank" rel="noopener">Android on GitHub</a>
+      <a href="https://github.com/horizon-rust/horizon" target="_blank" rel="noopener">Upstream Horizon</a>
+    </div>
+    <div>
+      <h5>Download</h5>
+      <a href="https://github.com/starling-client/starling/releases" target="_blank" rel="noopener">Android APK</a>
+      <a href="https://playhorizon.dev" target="_blank" rel="noopener">Windows / macOS / Linux</a>
+    </div>
+    <div>
+      <h5>On this page</h5>
+      <a href="#releases">Releases</a>
+      <a href="#contributors">Contributors</a>
+      <a href="#faq">FAQ</a>
+    </div>
+  </div>
+  <div class="wrap foot-bottom">
+    <p>Unofficial fan site. Not affiliated with Mojang Studios, Microsoft or the Horizon developers. Minecraft is a trademark of Mojang Studios.</p>
+    <p>Fonts: Geist &amp; Geist Mono (SIL Open Font License) &middot; &copy; <span id="year"></span> Horizon Updates</p>
+  </div>
 </footer>
 
 <script src="script.js"></script>
